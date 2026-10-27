@@ -46,9 +46,28 @@ app.use('/api/*', (req, res) => {
   res.status(404).json({ success: false, error: 'Endpoint not found' });
 });
 
-// Start Server and Initialize TiDB
-app.listen(PORT, async () => {
-  console.log(`\n🚀 WinTech Express Server running on http://localhost:${PORT}`);
-  console.log(`📡 Healthcheck: http://localhost:${PORT}/api/health\n`);
-  await initDatabase();
+// Lazy DB initialization middleware for serverless (Vercel)
+let dbInitialized = false;
+app.use(async (req, res, next) => {
+  if (!dbInitialized) {
+    try {
+      await initDatabase();
+    } catch (e) {
+      console.error('Serverless DB init error:', e.message);
+    }
+    dbInitialized = true;
+  }
+  next();
 });
+
+// Start Server locally if run directly
+if (!process.env.VERCEL && require.main === module) {
+  app.listen(PORT, async () => {
+    console.log(`\n🚀 WinTech Express Server running on http://localhost:${PORT}`);
+    console.log(`📡 Healthcheck: http://localhost:${PORT}/api/health\n`);
+    await initDatabase();
+    dbInitialized = true;
+  });
+}
+
+module.exports = app;
