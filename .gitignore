@@ -1,0 +1,41 @@
+# Environment Files & Secrets (NEVER COMMIT)
+.env
+.env.*
+!.env.example
+server/.env
+client/.env
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
+
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Production Builds
+dist/
+dist-ssr/
+client/dist/
+
+# Scratch, Testing & Temporary Logs
+scratch/
+logs/
+*.log
+npm-debug.log*
+server/data/
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Operating System & IDE Artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
