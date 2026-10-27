@@ -151,8 +151,28 @@ async function createTables() {
       }
       console.log('🌱 Seeded default courses into TiDB database.');
     }
+
+    // 3. Sync all data from TiDB database to local storage file
+    await syncDatabaseToLocal();
   } catch (err) {
     console.error('Error creating TiDB tables:', err.message);
+  }
+}
+
+/**
+ * 1-Time Sync: Fetch all enquiries from database and save to local storage (server/data/enquiries.json)
+ */
+async function syncDatabaseToLocal() {
+  if (!pool || !isConnectedToTiDB) return;
+  try {
+    const [rows] = await pool.query('SELECT * FROM enquiries ORDER BY created_at DESC');
+    if (Array.isArray(rows)) {
+      memoryDb.enquiries = rows;
+      saveLocalEnquiries(rows);
+      console.log('\x1b[32m%s\x1b[0m', `📥 [Database Sync] Fetched ${rows.length} enquiries from TiDB and saved into local storage (server/data/enquiries.json)!`);
+    }
+  } catch (err) {
+    console.warn('⚠️ Could not sync TiDB records to local storage:', err.message);
   }
 }
 
@@ -169,5 +189,6 @@ module.exports = {
   isTiDBConnected: () => isConnectedToTiDB,
   getStorageMode,
   saveLocalEnquiries,
+  syncDatabaseToLocal,
   memoryDb
 };

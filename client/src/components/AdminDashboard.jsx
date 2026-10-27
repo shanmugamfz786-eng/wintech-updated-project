@@ -15,9 +15,23 @@ export default function AdminDashboard({ onNavigate }) {
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  // Enquiry Management State
-  const [enquiries, setEnquiries] = useState([]);
-  const [stats, setStats] = useState({ totalCount: 0, newCount: 0, inProgressCount: 0, resolvedCount: 0 });
+  // Enquiry Management State (Pre-loaded from browser localStorage cache)
+  const [enquiries, setEnquiries] = useState(() => {
+    try {
+      const cached = localStorage.getItem('wintech_admin_enquiries_cache');
+      return cached ? JSON.parse(cached) : [];
+    } catch (_) {
+      return [];
+    }
+  });
+  const [stats, setStats] = useState(() => {
+    try {
+      const cached = localStorage.getItem('wintech_admin_stats_cache');
+      return cached ? JSON.parse(cached) : { totalCount: 0, newCount: 0, inProgressCount: 0, resolvedCount: 0 };
+    } catch (_) {
+      return { totalCount: 0, newCount: 0, inProgressCount: 0, resolvedCount: 0 };
+    }
+  });
   const [loadingEnquiries, setLoadingEnquiries] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -76,6 +90,15 @@ export default function AdminDashboard({ onNavigate }) {
         if (data.stats) {
           setStats(data.stats);
         }
+        // Save to browser localStorage cache
+        try {
+          if (searchQuery === '' && statusFilter === 'all' && categoryFilter === 'all') {
+            localStorage.setItem('wintech_admin_enquiries_cache', JSON.stringify(data.data || []));
+            if (data.stats) {
+              localStorage.setItem('wintech_admin_stats_cache', JSON.stringify(data.stats));
+            }
+          }
+        } catch (_) {}
       } else {
         showFeedback('error', data.error || 'Failed to load enquiries.');
       }

@@ -102,6 +102,20 @@ router.post('/', async (req, res) => {
       // Safe logging without exposing sensitive phone number
       console.log(`[Enquiry API] New enquiry recorded in TiDB (ID: ${result.insertId}, Category: ${interest})`);
 
+      // Keep local storage in sync
+      memoryDb.enquiries.unshift({
+        id: result.insertId,
+        name,
+        phone,
+        email: email || '',
+        interest,
+        message: message || '',
+        status: 'new',
+        admin_notes: '',
+        created_at: new Date().toISOString(),
+      });
+      saveLocalEnquiries(memoryDb.enquiries);
+
       // Send email notification ONLY after enquiry has been successfully saved to DB
       // Failure to deliver email will NOT roll back the DB or report false failure to customer
       sendEnquiryNotification({
