@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "WinTech Digital Partner Full Stack Application (React.js + Node.js Express + TiDB)",
   "scripts": {
-    "postinstall": "npm --prefix client install && npm --prefix server install",
     "install:all": "npm --prefix client install && npm --prefix server install",
     "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
     "dev:client": "npm --prefix client run dev",
     "dev:server": "npm --prefix server run dev",
-    "build": "npm --prefix client run build",
+    "build": "npm --prefix client install && npm --prefix client run build",
     "start": "npm --prefix server start",
     "sync:db": "npm --prefix server run sync:db"
   },

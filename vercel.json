@@ -1,11 +1,10 @@
 {
-  "version": 2,
-  "buildCommand": "npm --prefix client run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "client/dist",
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "destination": "https://wintech-updated-project.onrender.com/api/$1"
     },
     {
       "source": "/(.*)",
