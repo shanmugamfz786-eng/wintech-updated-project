@@ -1,11 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "client/dist",
+  "outputDirectory": "dist",
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://wintech-updated-project.onrender.com/api/$1"
-    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
